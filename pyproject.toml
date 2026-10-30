@@ -1,0 +1,16 @@
+[project]
+name = "material-review-scheduler-agent"
+version = "0.1.0"
+description = "素材审核与发布排期 Agent"
+requires-python = ">=3.12"
+dependencies = [
+    "claude-agent-sdk==0.2.175",
+    "pydantic>=2.10,<3",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

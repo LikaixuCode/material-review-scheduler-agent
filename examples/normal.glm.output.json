@@ -1,0 +1,102 @@
+{
+  "request_id": "case-m01",
+  "mode": "glm",
+  "status": "completed",
+  "items": [
+    {
+      "material_id": "M01",
+      "review_status": "passed",
+      "risk_reasons": [],
+      "requested_at": "2026-11-05T10:30:00+08:00",
+      "duration_minutes": 45,
+      "suggested_at": "2026-11-05T10:30:00+08:00",
+      "confirmation_status": "not_required",
+      "draft_save_status": "saved",
+      "draft_id": "49630146-b3f9-430e-8d09-1dc0ed8eebc6"
+    }
+  ],
+  "terminal": {
+    "status": "completed",
+    "reason": "completed",
+    "turns": 5,
+    "model": "glm-5.3-flash",
+    "reported_models": [
+      "glm-5.3-flash"
+    ]
+  },
+  "trace": [
+    {
+      "step": 1,
+      "tool": "read_material",
+      "arguments": {
+        "material_id": "M01"
+      },
+      "reason": "处理 case-m01，需先读取素材 M01 的元数据以判断内容与时长。",
+      "result": {
+        "ok": true,
+        "material": {
+          "id": "M01",
+          "title": "城市晨光",
+          "description": "原创城市风景短视频",
+          "copyright": "owned",
+          "status": "pending"
+        }
+      },
+      "next_action": "check_rules"
+    },
+    {
+      "step": 2,
+      "tool": "check_rules",
+      "arguments": {
+        "material_id": "M01"
+      },
+      "reason": "处理 case-m01，对素材 M01 进行规则合规与审核风险检查。",
+      "result": {
+        "ok": true,
+        "status": "passed",
+        "reasons": []
+      },
+      "next_action": "query_slots"
+    },
+    {
+      "step": 3,
+      "tool": "query_slots",
+      "arguments": {
+        "material_id": "M01",
+        "mode": "requested"
+      },
+      "reason": "素材 M01 审核通过，按要求查询 2026-11-05T10:30+08:00 起的 45 分钟硬性时段是否可用。",
+      "result": {
+        "ok": true,
+        "requested_at": "2026-11-05T10:30:00+08:00",
+        "duration_minutes": 45,
+        "available": true
+      },
+      "next_action": "save_draft"
+    },
+    {
+      "step": 4,
+      "tool": "save_draft",
+      "arguments": {
+        "material_id": "M01",
+        "proposed_at": "2026-11-05T10:30:00+08:00"
+      },
+      "reason": "素材 M01 审核通过且要求的 2026-11-05T10:30+08:00（45 分钟）时段可用，按原时段保存草稿。",
+      "result": {
+        "ok": true,
+        "duplicate": false,
+        "draft": {
+          "draft_id": "49630146-b3f9-430e-8d09-1dc0ed8eebc6",
+          "request_id": "case-m01",
+          "material_id": "M01",
+          "channel": "short_video",
+          "requested_at": "2026-11-05T10:30:00+08:00",
+          "proposed_at": "2026-11-05T10:30:00+08:00",
+          "confirmation_status": "not_required",
+          "duration_minutes": 45
+        }
+      },
+      "next_action": "finish"
+    }
+  ]
+}

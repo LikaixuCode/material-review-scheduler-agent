@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "duplicate": false,
+  "draft": {
+    "draft_id": "3915842c-d421-452f-931a-ee55cf5afbaa",
+    "request_id": "case-m01",
+    "material_id": "M01",
+    "channel": "short_video",
+    "requested_at": "2026-11-05T10:30:00+08:00",
+    "proposed_at": "2026-11-05T11:15:00+08:00",
+    "confirmation_status": "confirmed",
+    "duration_minutes": 45
+  }
+}

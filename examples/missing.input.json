@@ -1,0 +1,6 @@
+{
+  "request_id": "case-m02",
+  "items": [
+    {"material_id": "M02", "channel": "short_video", "requested_at": "2026-11-05T10:30:00+08:00", "duration_minutes": 45, "hard_time": true}
+  ]
+}

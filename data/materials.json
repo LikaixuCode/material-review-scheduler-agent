@@ -1,0 +1,5 @@
+[
+  {"id": "M01", "title": "城市晨光", "description": "原创城市风景短视频", "copyright": "owned", "status": "pending"},
+  {"id": "M02", "title": "旅行片段", "description": "待补充授权信息的视频", "copyright": null, "status": "pending"},
+  {"id": "M03", "title": "产品介绍", "description": "包含夸大宣传的演示内容", "copyright": "authorized", "status": "pending"}
+]

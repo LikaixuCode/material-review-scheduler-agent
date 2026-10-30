@@ -1,0 +1,4 @@
+{
+  "required_fields": ["title", "description", "copyright"],
+  "prohibited_terms": ["夸大宣传"]
+}

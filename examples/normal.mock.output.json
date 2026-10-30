@@ -1,0 +1,97 @@
+{
+  "request_id": "case-m01",
+  "mode": "mock",
+  "status": "completed",
+  "items": [
+    {
+      "material_id": "M01",
+      "review_status": "passed",
+      "risk_reasons": [],
+      "requested_at": "2026-11-05T10:30:00+08:00",
+      "duration_minutes": 45,
+      "suggested_at": "2026-11-05T10:30:00+08:00",
+      "confirmation_status": "not_required",
+      "draft_save_status": "saved",
+      "draft_id": "6102bc75-fa94-4b7d-9201-23d5ef4c2436"
+    }
+  ],
+  "terminal": {
+    "status": "completed",
+    "source": "scripted_mock"
+  },
+  "trace": [
+    {
+      "step": 1,
+      "tool": "read_material",
+      "arguments": {
+        "material_id": "M01"
+      },
+      "reason": "读取请求中的素材",
+      "result": {
+        "ok": true,
+        "material": {
+          "id": "M01",
+          "title": "城市晨光",
+          "description": "原创城市风景短视频",
+          "copyright": "owned",
+          "status": "pending"
+        }
+      },
+      "next_action": "check_rules"
+    },
+    {
+      "step": 2,
+      "tool": "check_rules",
+      "arguments": {
+        "material_id": "M01"
+      },
+      "reason": "检查素材资料与审核规则",
+      "result": {
+        "ok": true,
+        "status": "passed",
+        "reasons": []
+      },
+      "next_action": "query_slots"
+    },
+    {
+      "step": 3,
+      "tool": "query_slots",
+      "arguments": {
+        "material_id": "M01",
+        "mode": "requested"
+      },
+      "reason": "检查用户要求的时段",
+      "result": {
+        "ok": true,
+        "requested_at": "2026-11-05T10:30:00+08:00",
+        "duration_minutes": 45,
+        "available": true
+      },
+      "next_action": "save_draft"
+    },
+    {
+      "step": 4,
+      "tool": "save_draft",
+      "arguments": {
+        "material_id": "M01",
+        "proposed_at": "2026-11-05T10:30:00+08:00"
+      },
+      "reason": "保存草稿，变更时段等待确认",
+      "result": {
+        "ok": true,
+        "duplicate": false,
+        "draft": {
+          "draft_id": "6102bc75-fa94-4b7d-9201-23d5ef4c2436",
+          "request_id": "case-m01",
+          "material_id": "M01",
+          "channel": "short_video",
+          "requested_at": "2026-11-05T10:30:00+08:00",
+          "proposed_at": "2026-11-05T10:30:00+08:00",
+          "confirmation_status": "not_required",
+          "duration_minutes": 45
+        }
+      },
+      "next_action": "finish"
+    }
+  ]
+}

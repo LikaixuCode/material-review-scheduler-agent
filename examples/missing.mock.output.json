@@ -1,0 +1,64 @@
+{
+  "request_id": "case-m02",
+  "mode": "mock",
+  "status": "needs_attention",
+  "items": [
+    {
+      "material_id": "M02",
+      "review_status": "needs_info",
+      "risk_reasons": [
+        "缺少字段: copyright"
+      ],
+      "requested_at": "2026-11-05T10:30:00+08:00",
+      "duration_minutes": 45,
+      "suggested_at": null,
+      "confirmation_status": "not_applicable",
+      "draft_save_status": "not_attempted",
+      "draft_id": null
+    }
+  ],
+  "terminal": {
+    "status": "completed",
+    "source": "scripted_mock"
+  },
+  "trace": [
+    {
+      "step": 1,
+      "tool": "read_material",
+      "arguments": {
+        "material_id": "M02"
+      },
+      "reason": "读取请求中的素材",
+      "result": {
+        "ok": true,
+        "material": {
+          "id": "M02",
+          "title": "旅行片段",
+          "description": "待补充授权信息的视频",
+          "copyright": null,
+          "status": "pending"
+        },
+        "missing_information": [
+          "缺少字段: copyright"
+        ]
+      },
+      "next_action": "check_rules"
+    },
+    {
+      "step": 2,
+      "tool": "check_rules",
+      "arguments": {
+        "material_id": "M02"
+      },
+      "reason": "检查素材资料与审核规则",
+      "result": {
+        "ok": true,
+        "status": "needs_info",
+        "reasons": [
+          "缺少字段: copyright"
+        ]
+      },
+      "next_action": "finish"
+    }
+  ]
+}

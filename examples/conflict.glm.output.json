@@ -1,0 +1,120 @@
+{
+  "request_id": "case-m01",
+  "mode": "glm",
+  "status": "needs_confirmation",
+  "items": [
+    {
+      "material_id": "M01",
+      "review_status": "passed",
+      "risk_reasons": [],
+      "requested_at": "2026-11-05T10:30:00+08:00",
+      "duration_minutes": 45,
+      "suggested_at": "2026-11-05T11:15:00+08:00",
+      "confirmation_status": "pending",
+      "draft_save_status": "saved",
+      "draft_id": "3915842c-d421-452f-931a-ee55cf5afbaa"
+    }
+  ],
+  "terminal": {
+    "status": "completed",
+    "reason": "completed",
+    "turns": 6,
+    "model": "glm-5.3-flash",
+    "reported_models": [
+      "glm-5.3-flash"
+    ]
+  },
+  "trace": [
+    {
+      "step": 1,
+      "tool": "read_material",
+      "arguments": {
+        "material_id": "M01"
+      },
+      "reason": "审核前读取素材M01的元数据以确认内容信息。",
+      "result": {
+        "ok": true,
+        "material": {
+          "id": "M01",
+          "title": "城市晨光",
+          "description": "原创城市风景短视频",
+          "copyright": "owned",
+          "status": "pending"
+        }
+      },
+      "next_action": "check_rules"
+    },
+    {
+      "step": 2,
+      "tool": "check_rules",
+      "arguments": {
+        "material_id": "M01"
+      },
+      "reason": "对素材M01进行规则合规与风险检查后再决定是否进入排期。",
+      "result": {
+        "ok": true,
+        "status": "passed",
+        "reasons": []
+      },
+      "next_action": "query_slots"
+    },
+    {
+      "step": 3,
+      "tool": "query_slots",
+      "arguments": {
+        "material_id": "M01",
+        "mode": "requested"
+      },
+      "reason": "规则检查通过，查询用户要求的2026-11-05T10:30时段是否可用。",
+      "result": {
+        "ok": true,
+        "requested_at": "2026-11-05T10:30:00+08:00",
+        "duration_minutes": 45,
+        "available": false
+      },
+      "next_action": "query_slots"
+    },
+    {
+      "step": 4,
+      "tool": "query_slots",
+      "arguments": {
+        "material_id": "M01",
+        "mode": "alternatives"
+      },
+      "reason": "请求时段冲突，查询可用替代时段供用户确认。",
+      "result": {
+        "ok": true,
+        "candidates": [
+          "2026-11-05T11:15:00+08:00",
+          "2026-11-05T12:00:00+08:00",
+          "2026-11-05T12:45:00+08:00"
+        ]
+      },
+      "next_action": "save_draft"
+    },
+    {
+      "step": 5,
+      "tool": "save_draft",
+      "arguments": {
+        "material_id": "M01",
+        "proposed_at": "2026-11-05T11:15:00+08:00"
+      },
+      "reason": "原请求时段冲突且不可用，保存最接近的可用替代时段为待确认草稿。",
+      "result": {
+        "ok": true,
+        "duplicate": false,
+        "draft": {
+          "draft_id": "3915842c-d421-452f-931a-ee55cf5afbaa",
+          "request_id": "case-m01",
+          "material_id": "M01",
+          "channel": "short_video",
+          "requested_at": "2026-11-05T10:30:00+08:00",
+          "proposed_at": "2026-11-05T11:15:00+08:00",
+          "confirmation_status": "pending",
+          "duration_minutes": 45
+        }
+      },
+      "next_action": "finish"
+    }
+  ]
+}

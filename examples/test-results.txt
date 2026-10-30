@@ -1,0 +1,5 @@
+$ uv run --locked python -m pytest -q
+.................                                                        [100%]
+17 passed in 3.08s
+
+exit_code=0
