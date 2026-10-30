@@ -7,12 +7,15 @@
       "material_id": "M01",
       "review_status": "passed",
       "risk_reasons": [],
+      "missing_information": [],
       "requested_at": "2026-11-05T10:30:00+08:00",
       "duration_minutes": 45,
       "suggested_at": "2026-11-05T11:15:00+08:00",
       "confirmation_status": "pending",
       "draft_save_status": "saved",
-      "draft_id": "3a3a669d-3c93-427b-b86e-c0cb081cd767"
+      "draft_id": "4506d1a6-cfa7-4c7a-ab84-11b55f8f681e",
+      "schedule_status": "pending_confirmation",
+      "error_code": null
     }
   ],
   "terminal": {
@@ -49,7 +52,8 @@
       "result": {
         "ok": true,
         "status": "passed",
-        "reasons": []
+        "reasons": [],
+        "missing_information": []
       },
       "next_action": "query_slots"
     },
@@ -99,7 +103,7 @@
         "ok": true,
         "duplicate": false,
         "draft": {
-          "draft_id": "3a3a669d-3c93-427b-b86e-c0cb081cd767",
+          "draft_id": "4506d1a6-cfa7-4c7a-ab84-11b55f8f681e",
           "request_id": "case-m01",
           "material_id": "M01",
           "channel": "short_video",

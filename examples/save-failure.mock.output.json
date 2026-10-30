@@ -7,12 +7,15 @@
       "material_id": "M01",
       "review_status": "passed",
       "risk_reasons": [],
+      "missing_information": [],
       "requested_at": "2026-11-05T10:30:00+08:00",
       "duration_minutes": 45,
       "suggested_at": "2026-11-05T10:30:00+08:00",
       "confirmation_status": "not_applicable",
       "draft_save_status": "failed",
-      "draft_id": null
+      "draft_id": null,
+      "schedule_status": "not_applicable",
+      "error_code": "save_failed"
     }
   ],
   "terminal": {
@@ -49,7 +52,8 @@
       "result": {
         "ok": true,
         "status": "passed",
-        "reasons": []
+        "reasons": [],
+        "missing_information": []
       },
       "next_action": "query_slots"
     },

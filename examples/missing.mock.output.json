@@ -9,12 +9,17 @@
       "risk_reasons": [
         "缺少字段: copyright"
       ],
+      "missing_information": [
+        "缺少字段: copyright"
+      ],
       "requested_at": "2026-11-05T10:30:00+08:00",
       "duration_minutes": 45,
       "suggested_at": null,
       "confirmation_status": "not_applicable",
       "draft_save_status": "not_attempted",
-      "draft_id": null
+      "draft_id": null,
+      "schedule_status": "not_applicable",
+      "error_code": null
     }
   ],
   "terminal": {
@@ -55,6 +60,9 @@
         "ok": true,
         "status": "needs_info",
         "reasons": [
+          "缺少字段: copyright"
+        ],
+        "missing_information": [
           "缺少字段: copyright"
         ]
       },

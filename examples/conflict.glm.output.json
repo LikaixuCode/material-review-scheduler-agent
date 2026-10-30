@@ -7,12 +7,15 @@
       "material_id": "M01",
       "review_status": "passed",
       "risk_reasons": [],
+      "missing_information": [],
       "requested_at": "2026-11-05T10:30:00+08:00",
       "duration_minutes": 45,
       "suggested_at": "2026-11-05T11:15:00+08:00",
       "confirmation_status": "pending",
       "draft_save_status": "saved",
-      "draft_id": "3915842c-d421-452f-931a-ee55cf5afbaa"
+      "draft_id": "3e4a3c25-860c-4d53-8b0d-cff4878498df",
+      "schedule_status": "pending_confirmation",
+      "error_code": null
     }
   ],
   "terminal": {
@@ -31,7 +34,7 @@
       "arguments": {
         "material_id": "M01"
       },
-      "reason": "审核前读取素材M01的元数据以确认内容信息。",
+      "reason": "读取素材 M01 元数据以确认资料完整性，作为审核与排期依据。",
       "result": {
         "ok": true,
         "material": {
@@ -50,11 +53,12 @@
       "arguments": {
         "material_id": "M01"
       },
-      "reason": "对素材M01进行规则合规与风险检查后再决定是否进入排期。",
+      "reason": "素材资料完整（版权自有、状态待审），对其执行发布规则与风险检查。",
       "result": {
         "ok": true,
         "status": "passed",
-        "reasons": []
+        "reasons": [],
+        "missing_information": []
       },
       "next_action": "query_slots"
     },
@@ -65,7 +69,7 @@
         "material_id": "M01",
         "mode": "requested"
       },
-      "reason": "规则检查通过，查询用户要求的2026-11-05T10:30时段是否可用。",
+      "reason": "规则检查通过，查询用户硬性要求的 2026-11-05T10:30:00+08:00 时段可用性。",
       "result": {
         "ok": true,
         "requested_at": "2026-11-05T10:30:00+08:00",
@@ -81,7 +85,7 @@
         "material_id": "M01",
         "mode": "alternatives"
       },
-      "reason": "请求时段冲突，查询可用替代时段供用户确认。",
+      "reason": "用户要求的时段不可用（有冲突），查询可选替代时段。",
       "result": {
         "ok": true,
         "candidates": [
@@ -99,12 +103,12 @@
         "material_id": "M01",
         "proposed_at": "2026-11-05T11:15:00+08:00"
       },
-      "reason": "原请求时段冲突且不可用，保存最接近的可用替代时段为待确认草稿。",
+      "reason": "原要求时段冲突，选择紧邻的可用替代时段 11:15 保存草稿，待用户确认。",
       "result": {
         "ok": true,
         "duplicate": false,
         "draft": {
-          "draft_id": "3915842c-d421-452f-931a-ee55cf5afbaa",
+          "draft_id": "3e4a3c25-860c-4d53-8b0d-cff4878498df",
           "request_id": "case-m01",
           "material_id": "M01",
           "channel": "short_video",

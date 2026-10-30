@@ -17,10 +17,9 @@ def public_draft(draft: dict | None) -> dict | None:
 
 def evaluate_material(material: Material | None, rules: RuleSet) -> dict:
     if material is None:
-        return {"status": "needs_info", "reasons": ["找不到素材"]}
+        return {"status": "needs_info", "reasons": ["找不到素材"], "missing_information": ["找不到素材"]}
     missing = [name for name in rules.required_fields if not (getattr(material, name) or "").strip()]
-    if missing:
-        return {"status": "needs_info", "reasons": [f"缺少字段: {', '.join(missing)}"]}
+    missing_information = [f"缺少字段: {', '.join(missing)}"] if missing else []
     risks = []
     if material.status != "pending":
         risks.append("素材不是待处理状态")
@@ -28,7 +27,11 @@ def evaluate_material(material: Material | None, rules: RuleSet) -> dict:
         risks.append("素材未获得版权授权")
     text = f"{material.title or ''} {material.description or ''}"
     risks.extend(f"命中审核规则: {term}" for term in rules.prohibited_terms if term in text)
-    return {"status": "blocked" if risks else "passed", "reasons": risks}
+    return {
+        "status": "blocked" if risks else "needs_info" if missing else "passed",
+        "reasons": missing_information + risks,
+        "missing_information": missing_information,
+    }
 
 
 class BusinessTools:
@@ -56,9 +59,10 @@ class BusinessTools:
             material = self.materials.get(material_id)
             result = {"ok": bool(material), "material": material.model_dump(mode="json") if material else None}
             review = evaluate_material(material, self.rules)
-            if review["status"] == "needs_info":
+            if review["status"] != "passed":
                 self.reviews[material_id] = review
-                result["missing_information"] = review["reasons"]
+                if review["missing_information"]:
+                    result["missing_information"] = review["missing_information"]
         elif name == "check_rules":
             review = evaluate_material(self.materials.get(material_id), self.rules)
             self.reviews[material_id] = review
@@ -86,13 +90,13 @@ class BusinessTools:
         exclude_draft = current_draft["draft_id"] if current_draft else ""
         if mode == "requested":
             self.queried_ids.add(item.material_id)
-            return {"ok": True, "requested_at": item.requested_at.isoformat(), "duration_minutes": item.duration_minutes, "available": self.store.is_available(item.channel, item.requested_at, item.duration_minutes, exclude_draft)}
+            return {"ok": True, "requested_at": item.requested_at.isoformat(), "duration_minutes": item.duration_minutes, "available": self.store.is_available(item.channel, item.requested_at, item.duration_minutes, exclude_draft, self.request.request_id)}
         if mode != "alternatives":
             return {"ok": False, "code": "invalid_mode", "message": "查询模式无效"}
         candidates = []
         for offset in range(1, 9):
             candidate = item.requested_at + timedelta(minutes=item.duration_minutes * offset)
-            if self.store.is_available(item.channel, candidate, item.duration_minutes, exclude_draft):
+            if self.store.is_available(item.channel, candidate, item.duration_minutes, exclude_draft, self.request.request_id):
                 candidates.append(candidate.isoformat())
             if len(candidates) == 3:
                 break
@@ -100,11 +104,11 @@ class BusinessTools:
 
     def save_draft(self, item: ScheduleItem, proposed_at: str) -> dict:
         self.proposals[item.material_id] = proposed_at
-        existing = self.store.get_draft(self.request.request_id, item.material_id)
+        existing = self.store.existing_result(self.request.request_id, item.material_id)
         if existing:
-            result = {"ok": True, "duplicate": True, "draft": public_draft(existing)}
-            self.save_results[item.material_id] = result
-            return result
+            existing["draft"] = public_draft(existing["draft"])
+            self.save_results[item.material_id] = existing
+            return existing
         try:
             time = datetime.fromisoformat(proposed_at)
         except ValueError:
@@ -132,20 +136,33 @@ class BusinessTools:
         items = []
         for item in self.request.items:
             review = self.reviews.get(item.material_id, {"status": "not_checked", "reasons": []})
-            saved = public_draft(self.store.get_draft(self.request.request_id, item.material_id))
+            stored = self.store.get_draft(self.request.request_id, item.material_id)
+            saved = public_draft(stored)
             attempt = self.save_results.get(item.material_id)
+            conflict = bool(stored and not self.store.is_available(
+                stored["channel"], datetime.fromisoformat(stored["proposed_at"]), item.duration_minutes,
+                stored["draft_id"], self.request.request_id,
+            ))
             items.append({
                 "material_id": item.material_id,
                 "review_status": review["status"],
                 "risk_reasons": review["reasons"],
+                "missing_information": review.get("missing_information", []),
                 "requested_at": item.requested_at.isoformat(),
                 "duration_minutes": item.duration_minutes,
                 "suggested_at": saved["proposed_at"] if saved else self.proposals.get(item.material_id),
                 "confirmation_status": saved["confirmation_status"] if saved else "not_applicable",
-                "draft_save_status": "failed" if attempt and not attempt["ok"] else "saved" if saved else "not_attempted",
+                "draft_save_status": "failed" if attempt and not attempt["ok"] and attempt.get("code") != "draft_conflict" else "saved" if saved else "not_attempted",
                 "draft_id": saved["draft_id"] if saved else None,
+                "schedule_status": "conflict" if conflict else "pending_confirmation" if saved and saved["confirmation_status"] == "pending" else "available" if saved else "not_applicable",
+                "error_code": attempt.get("code") if attempt and not attempt["ok"] else None,
             })
-        if terminal.get("status") != "completed" or any(row["draft_save_status"] == "failed" or row["review_status"] == "not_checked" for row in items):
+        if terminal.get("status") != "completed" or any(
+            row["draft_save_status"] == "failed" or row["schedule_status"] == "conflict"
+            or row["review_status"] == "not_checked"
+            or (row["review_status"] == "passed" and row["draft_save_status"] != "saved")
+            for row in items
+        ):
             status = "incomplete"
         elif any(row["review_status"] in {"needs_info", "blocked"} for row in items):
             status = "needs_attention"
@@ -155,4 +172,8 @@ class BusinessTools:
             status = "needs_confirmation"
         else:
             status = "completed"
-        return {"request_id": self.request.request_id, "mode": mode, "status": status, "items": items, "terminal": terminal, "trace": self.trace}
+        trace = [dict(step) for step in self.trace]
+        if trace and terminal.get("status") != "completed":
+            trace[-1]["next_action"] = "interrupted"
+            trace[-1]["termination_reason"] = terminal.get("reason", "unknown")
+        return {"request_id": self.request.request_id, "mode": mode, "status": status, "items": items, "terminal": terminal, "trace": trace}

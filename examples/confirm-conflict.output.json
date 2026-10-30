@@ -1,0 +1,15 @@
+{
+  "ok": false,
+  "code": "slot_conflict",
+  "message": "确认失败：建议时段已被占用",
+  "draft": {
+    "draft_id": "3e4a3c25-860c-4d53-8b0d-cff4878498df",
+    "request_id": "case-m01",
+    "material_id": "M01",
+    "channel": "short_video",
+    "requested_at": "2026-11-05T10:30:00+08:00",
+    "proposed_at": "2026-11-05T11:15:00+08:00",
+    "confirmation_status": "pending",
+    "duration_minutes": 45
+  }
+}

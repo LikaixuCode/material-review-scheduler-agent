@@ -1,0 +1,14 @@
+[
+  {
+    "channel": "short_video",
+    "start_at": "2026-11-05T10:30:00+08:00",
+    "duration_minutes": 45,
+    "label": "已有排期"
+  },
+  {
+    "channel": "short_video",
+    "start_at": "2026-11-05T11:15:00+08:00",
+    "duration_minutes": 45,
+    "label": "确认前新增的已有排期"
+  }
+]

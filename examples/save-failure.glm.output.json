@@ -7,12 +7,15 @@
       "material_id": "M01",
       "review_status": "passed",
       "risk_reasons": [],
+      "missing_information": [],
       "requested_at": "2026-11-05T10:30:00+08:00",
       "duration_minutes": 45,
       "suggested_at": "2026-11-05T10:30:00+08:00",
       "confirmation_status": "not_applicable",
       "draft_save_status": "failed",
-      "draft_id": null
+      "draft_id": null,
+      "schedule_status": "not_applicable",
+      "error_code": "save_failed"
     }
   ],
   "terminal": {
@@ -31,7 +34,7 @@
       "arguments": {
         "material_id": "M01"
       },
-      "reason": "读取素材元数据以确认内容与时长，作为审核和排期依据",
+      "reason": "读取素材 M01 的元数据以进行审核。",
       "result": {
         "ok": true,
         "material": {
@@ -50,11 +53,12 @@
       "arguments": {
         "material_id": "M01"
       },
-      "reason": "审核该素材所需资料是否齐全并识别潜在风险",
+      "reason": "检查素材 M01 的资料完整性与审核风险。",
       "result": {
         "ok": true,
         "status": "passed",
-        "reasons": []
+        "reasons": [],
+        "missing_information": []
       },
       "next_action": "query_slots"
     },
@@ -65,7 +69,7 @@
         "material_id": "M01",
         "mode": "requested"
       },
-      "reason": "审核通过后查询用户要求的时段是否可用",
+      "reason": "规则审核通过，查询用户要求的 2026-11-05T10:30:00+08:00 时段是否可用。",
       "result": {
         "ok": true,
         "requested_at": "2026-11-05T10:30:00+08:00",
@@ -81,7 +85,7 @@
         "material_id": "M01",
         "proposed_at": "2026-11-05T10:30:00+08:00"
       },
-      "reason": "要求时段可用且审核通过，按用户指定时间保存排期草稿",
+      "reason": "要求时段可用，按用户要求时间保存本地草稿。",
       "result": {
         "ok": false,
         "code": "save_failed",
@@ -96,7 +100,7 @@
         "material_id": "M01",
         "proposed_at": "2026-11-05T10:30:00+08:00"
       },
-      "reason": "重试保存排期草稿：要求时段可用且审核通过",
+      "reason": "首次保存因存储失败未成功，重试保存要求时段草稿。",
       "result": {
         "ok": false,
         "code": "save_failed",

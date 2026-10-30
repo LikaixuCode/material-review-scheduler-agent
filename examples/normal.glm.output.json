@@ -7,12 +7,15 @@
       "material_id": "M01",
       "review_status": "passed",
       "risk_reasons": [],
+      "missing_information": [],
       "requested_at": "2026-11-05T10:30:00+08:00",
       "duration_minutes": 45,
       "suggested_at": "2026-11-05T10:30:00+08:00",
       "confirmation_status": "not_required",
       "draft_save_status": "saved",
-      "draft_id": "49630146-b3f9-430e-8d09-1dc0ed8eebc6"
+      "draft_id": "f9b08b67-6b3e-4c81-ba88-5669d72df09e",
+      "schedule_status": "available",
+      "error_code": null
     }
   ],
   "terminal": {
@@ -31,7 +34,7 @@
       "arguments": {
         "material_id": "M01"
       },
-      "reason": "处理 case-m01，需先读取素材 M01 的元数据以判断内容与时长。",
+      "reason": "处理 case-m01：读取素材 M01 元数据以开展审核。",
       "result": {
         "ok": true,
         "material": {
@@ -50,11 +53,12 @@
       "arguments": {
         "material_id": "M01"
       },
-      "reason": "处理 case-m01，对素材 M01 进行规则合规与审核风险检查。",
+      "reason": "处理 case-m01：检查素材 M01 的资料完整性与审核风险。",
       "result": {
         "ok": true,
         "status": "passed",
-        "reasons": []
+        "reasons": [],
+        "missing_information": []
       },
       "next_action": "query_slots"
     },
@@ -65,7 +69,7 @@
         "material_id": "M01",
         "mode": "requested"
       },
-      "reason": "素材 M01 审核通过，按要求查询 2026-11-05T10:30+08:00 起的 45 分钟硬性时段是否可用。",
+      "reason": "素材 M01 审核通过，查询要求的 2026-11-05T10:30:00+08:00 时段是否可用。",
       "result": {
         "ok": true,
         "requested_at": "2026-11-05T10:30:00+08:00",
@@ -81,12 +85,12 @@
         "material_id": "M01",
         "proposed_at": "2026-11-05T10:30:00+08:00"
       },
-      "reason": "素材 M01 审核通过且要求的 2026-11-05T10:30+08:00（45 分钟）时段可用，按原时段保存草稿。",
+      "reason": "素材 M01 审核通过且要求的时段可用，按原要求保存排期草稿。",
       "result": {
         "ok": true,
         "duplicate": false,
         "draft": {
-          "draft_id": "49630146-b3f9-430e-8d09-1dc0ed8eebc6",
+          "draft_id": "f9b08b67-6b3e-4c81-ba88-5669d72df09e",
           "request_id": "case-m01",
           "material_id": "M01",
           "channel": "short_video",

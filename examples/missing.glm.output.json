@@ -9,12 +9,17 @@
       "risk_reasons": [
         "缺少字段: copyright"
       ],
+      "missing_information": [
+        "缺少字段: copyright"
+      ],
       "requested_at": "2026-11-05T10:30:00+08:00",
       "duration_minutes": 45,
       "suggested_at": null,
       "confirmation_status": "not_applicable",
       "draft_save_status": "not_attempted",
-      "draft_id": null
+      "draft_id": null,
+      "schedule_status": "not_applicable",
+      "error_code": null
     }
   ],
   "terminal": {
@@ -33,7 +38,7 @@
       "arguments": {
         "material_id": "M02"
       },
-      "reason": "读取素材 M02 元数据以启动审核流程。",
+      "reason": "读取素材 M02 的元数据以获取审核所需资料。",
       "result": {
         "ok": true,
         "material": {
@@ -55,11 +60,14 @@
       "arguments": {
         "material_id": "M02"
       },
-      "reason": "检查素材 M02 所需资料完整性与审核风险。",
+      "reason": "检查素材 M02 的资料完整性与审核风险。",
       "result": {
         "ok": true,
         "status": "needs_info",
         "reasons": [
+          "缺少字段: copyright"
+        ],
+        "missing_information": [
           "缺少字段: copyright"
         ]
       },

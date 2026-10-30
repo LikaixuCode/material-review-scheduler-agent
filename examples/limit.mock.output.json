@@ -1,0 +1,49 @@
+{
+  "request_id": "case-m01",
+  "mode": "mock",
+  "status": "incomplete",
+  "items": [
+    {
+      "material_id": "M01",
+      "review_status": "not_checked",
+      "risk_reasons": [],
+      "missing_information": [],
+      "requested_at": "2026-11-05T10:30:00+08:00",
+      "duration_minutes": 45,
+      "suggested_at": null,
+      "confirmation_status": "not_applicable",
+      "draft_save_status": "not_attempted",
+      "draft_id": null,
+      "schedule_status": "not_applicable",
+      "error_code": null
+    }
+  ],
+  "terminal": {
+    "status": "incomplete",
+    "source": "scripted_mock",
+    "reason": "max_steps",
+    "max_steps": 1
+  },
+  "trace": [
+    {
+      "step": 1,
+      "tool": "read_material",
+      "arguments": {
+        "material_id": "M01"
+      },
+      "reason": "读取请求中的素材",
+      "result": {
+        "ok": true,
+        "material": {
+          "id": "M01",
+          "title": "城市晨光",
+          "description": "原创城市风景短视频",
+          "copyright": "owned",
+          "status": "pending"
+        }
+      },
+      "next_action": "interrupted",
+      "termination_reason": "max_steps"
+    }
+  ]
+}

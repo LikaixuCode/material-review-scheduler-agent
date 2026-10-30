@@ -1,0 +1,69 @@
+{
+  "request_id": "case-m01",
+  "mode": "glm",
+  "status": "incomplete",
+  "items": [
+    {
+      "material_id": "M01",
+      "review_status": "passed",
+      "risk_reasons": [],
+      "missing_information": [],
+      "requested_at": "2026-11-05T10:30:00+08:00",
+      "duration_minutes": 45,
+      "suggested_at": null,
+      "confirmation_status": "not_applicable",
+      "draft_save_status": "not_attempted",
+      "draft_id": null,
+      "schedule_status": "not_applicable",
+      "error_code": null
+    }
+  ],
+  "terminal": {
+    "status": "incomplete",
+    "reason": "max_turns",
+    "turns": 2,
+    "model": "glm-5.3-flash",
+    "api_error_status": null,
+    "detail": "",
+    "reported_models": [
+      "glm-5.3-flash"
+    ]
+  },
+  "trace": [
+    {
+      "step": 1,
+      "tool": "read_material",
+      "arguments": {
+        "material_id": "M01"
+      },
+      "reason": "读取素材M01的元数据以评估内容与排期。",
+      "result": {
+        "ok": true,
+        "material": {
+          "id": "M01",
+          "title": "城市晨光",
+          "description": "原创城市风景短视频",
+          "copyright": "owned",
+          "status": "pending"
+        }
+      },
+      "next_action": "check_rules"
+    },
+    {
+      "step": 2,
+      "tool": "check_rules",
+      "arguments": {
+        "material_id": "M01"
+      },
+      "reason": "审核素材M01所需资料完整性与合规风险。",
+      "result": {
+        "ok": true,
+        "status": "passed",
+        "reasons": [],
+        "missing_information": []
+      },
+      "next_action": "interrupted",
+      "termination_reason": "max_turns"
+    }
+  ]
+}

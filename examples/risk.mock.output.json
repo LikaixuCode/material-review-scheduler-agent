@@ -9,12 +9,15 @@
       "risk_reasons": [
         "命中审核规则: 夸大宣传"
       ],
+      "missing_information": [],
       "requested_at": "2026-11-05T10:30:00+08:00",
       "duration_minutes": 45,
       "suggested_at": null,
       "confirmation_status": "not_applicable",
       "draft_save_status": "not_attempted",
-      "draft_id": null
+      "draft_id": null,
+      "schedule_status": "not_applicable",
+      "error_code": null
     }
   ],
   "terminal": {
@@ -53,7 +56,8 @@
         "status": "blocked",
         "reasons": [
           "命中审核规则: 夸大宣传"
-        ]
+        ],
+        "missing_information": []
       },
       "next_action": "finish"
     }

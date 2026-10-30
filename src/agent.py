@@ -4,22 +4,38 @@ import os
 from .business import BusinessTools
 
 
-def run_mock(service: BusinessTools) -> dict:
+def run_mock(service: BusinessTools, max_steps: int = 12) -> dict:
     """离线脚本只演示流程，不代表模型决策能力。"""
+    def call(name: str, args: dict) -> dict | None:
+        if len(service.trace) >= max_steps:
+            return None
+        return service.call(name, args)
+
+    def limit_reached() -> dict:
+        return service.output("mock", {"status": "incomplete", "source": "scripted_mock", "reason": "max_steps", "max_steps": max_steps})
+
     for item in service.request.items:
         material_id = item.material_id
-        service.call("read_material", {"material_id": material_id, "reason": "读取请求中的素材"})
-        review = service.call("check_rules", {"material_id": material_id, "reason": "检查素材资料与审核规则"})
+        if call("read_material", {"material_id": material_id, "reason": "读取请求中的素材"}) is None:
+            return limit_reached()
+        review = call("check_rules", {"material_id": material_id, "reason": "检查素材资料与审核规则"})
+        if review is None:
+            return limit_reached()
         if review["status"] != "passed":
             continue
-        slot = service.call("query_slots", {"material_id": material_id, "mode": "requested", "reason": "检查用户要求的时段"})
+        slot = call("query_slots", {"material_id": material_id, "mode": "requested", "reason": "检查用户要求的时段"})
+        if slot is None:
+            return limit_reached()
         proposed_at = item.requested_at.isoformat()
         if not slot["available"]:
-            alternatives = service.call("query_slots", {"material_id": material_id, "mode": "alternatives", "reason": "原定时段冲突，查询可选时段"})
+            alternatives = call("query_slots", {"material_id": material_id, "mode": "alternatives", "reason": "原定时段冲突，查询可选时段"})
+            if alternatives is None:
+                return limit_reached()
             if not alternatives["candidates"]:
                 continue
             proposed_at = alternatives["candidates"][0]
-        service.call("save_draft", {"material_id": material_id, "proposed_at": proposed_at, "reason": "保存草稿，变更时段等待确认"})
+        if call("save_draft", {"material_id": material_id, "proposed_at": proposed_at, "reason": "保存草稿，变更时段等待确认"}) is None:
+            return limit_reached()
     return service.output("mock", {"status": "completed", "source": "scripted_mock"})
 
 

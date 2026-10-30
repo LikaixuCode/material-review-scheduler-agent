@@ -27,7 +27,9 @@ uv run python -m src.main run --mode mock --input examples/conflict.input.json -
 uv run python -m src.main confirm --request-id case-m01 --material-id M01 --time 2026-11-05T11:15:00+08:00 --db .runtime/conflict.sqlite3
 ```
 
-`--schedule` 只在数据库首次创建时导入已有排期。比较不同排期场景时，请使用不同的数据库文件。相同请求对同一个数据库重复提交会返回同一份草稿。
+`--schedule` 接收完整的已有排期快照。每次 `run` 或 `confirm` 显式传入时，都会在事务中替换数据库里的已有排期；不传入时沿用数据库上次保存的快照。新数据库在不传入该参数时没有已有排期。确认或重复提交前，如果外部排期有变化，需要传入最新快照。比较互不影响的场景时，请使用不同的数据库文件。
+
+相同请求对同一个数据库重复提交会返回同一份草稿。若最新排期已与原草稿冲突，结果保留原草稿 ID，标记 `schedule_status: conflict` 和 `incomplete`，不会新建草稿。
 
 模拟保存失败：
 
@@ -51,7 +53,7 @@ uv run python scripts/sdk_smoke.py
 uv run python -m src.main run --mode glm --input examples/normal.input.json --db .runtime/glm-normal.sqlite3
 ```
 
-默认地址是 `https://open.bigmodel.cn/api/anthropic`，默认模型是 `glm-5.3-flash`。SDK 只加载本项目注册的四个业务工具，最多运行 12 个 Agent 轮次。模型调用失败时返回 `incomplete`，不会自动切换为 Mock。
+默认地址是 `https://open.bigmodel.cn/api/anthropic`，默认模型是 `glm-5.3-flash`。SDK 只加载本项目注册的四个业务工具，`max_turns` 默认设为 12；一轮可能包含多个工具调用。`--max-turns` 可调整上限；在离线 Mock 中，该参数限制业务工具调用次数。达到上限或模型调用失败时返回 `incomplete`，不会自动切换为 Mock。
 
 智谱官方支持 [Claude Code 接入 Coding Plan](https://docs.bigmodel.cn/cn/coding-plan/tool/claude)，其 [FAQ](https://docs.bigmodel.cn/cn/coding-plan/faq) 对自建应用另有使用标准 API 的说明。SDK 与本项目场景的套餐适用范围以智谱实际规则为准；接口成功不等同于套餐适用范围已经确认。
 
@@ -59,9 +61,9 @@ uv run python -m src.main run --mode glm --input examples/normal.input.json --db
 
 输入中的每项素材包含 `material_id`、`channel`、带时区的 `requested_at`、`duration_minutes` 和 `hard_time`。时长未指定时默认为 60 分钟，支持 1 至 1440 分钟。演示规则和素材位于 `data/`。
 
-输出包含请求状态、逐项审核状态、风险原因、原定和建议时间、确认状态、草稿保存状态、草稿 ID、SDK 结束状态及 Trace。Trace 记录工具参数、返回摘要、后续动作和简短依据，不记录密钥和模型内部思维内容。
+输出包含请求状态、逐项审核状态、风险原因、缺失信息、原定和建议时间、确认状态、当前时段状态、草稿保存状态、草稿 ID、SDK 结束状态及 Trace。Trace 记录工具参数、返回摘要、后续动作和简短依据；执行中断时最后一步标为 `interrupted` 并注明原因。记录不包含密钥和模型内部思维内容。
 
-正常草稿在本地模拟排期中占位；替代时段草稿先保持待确认且不占位，确认前会重新检查。所有结果都只是草稿。
+正常草稿在本地模拟排期中占位；替代时段草稿先保持待确认，不占用其他请求的时段。同一请求中的多项建议会避开彼此，明确确认时会再次检查已有排期和占位草稿。所有结果都只是草稿。
 
 ## 评审入口
 

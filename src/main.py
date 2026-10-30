@@ -31,7 +31,7 @@ def parser() -> argparse.ArgumentParser:
     confirm.add_argument("--time", required=True, help="要确认的带时区 ISO 时间")
     for subcommand in (run, confirm):
         subcommand.add_argument("--db", type=Path, default=ROOT / ".runtime/drafts.sqlite3")
-        subcommand.add_argument("--schedule", type=Path, default=ROOT / "data/schedules/free.json")
+        subcommand.add_argument("--schedule", type=Path, help="本次已有排期快照；未提供时沿用数据库中的已有排期")
     return command
 
 
@@ -40,23 +40,28 @@ def main() -> int:
     try:
         materials = [Material.model_validate(value) for value in json.loads((ROOT / "data/materials.json").read_text())]
         rules = RuleSet.model_validate_json((ROOT / "data/rules.json").read_text())
-        bookings = [ExistingBooking.model_validate(value) for value in json.loads(args.schedule.read_text())]
-        if args.command == "confirm" and not args.db.exists():
-            raise ValueError("数据库不存在，请先运行排期请求")
-        store = DraftStore(args.db, bookings)
+        bookings = [ExistingBooking.model_validate(value) for value in json.loads(args.schedule.read_text())] if args.schedule else None
+        if args.command == "run":
+            if args.max_turns < 1:
+                raise ValueError("max-turns 必须大于零")
+            request = ScheduleRequest.model_validate_json(args.input.read_text())
+        else:
+            if not args.db.exists():
+                raise ValueError("数据库不存在，请先运行排期请求")
+            time = datetime.fromisoformat(args.time)
+            if time.tzinfo is None or time.utcoffset() is None:
+                raise ValueError("确认时间必须包含时区")
+        store = DraftStore(args.db)
         try:
             if args.command == "run":
-                if args.max_turns < 1:
-                    raise ValueError("max-turns 必须大于零")
-                request = ScheduleRequest.model_validate_json(args.input.read_text())
                 store.register_request(request)
+            if bookings is not None:
+                store.replace_bookings(bookings)
+            if args.command == "run":
                 service = BusinessTools(request, materials, rules, store, args.simulate_save_failure)
-                result = run_mock(service) if args.mode == "mock" else asyncio.run(run_glm(service, args.max_turns))
+                result = run_mock(service, args.max_turns) if args.mode == "mock" else asyncio.run(run_glm(service, args.max_turns))
                 exit_code = 1 if result["status"] == "incomplete" else 0
             else:
-                time = datetime.fromisoformat(args.time)
-                if time.tzinfo is None or time.utcoffset() is None:
-                    raise ValueError("确认时间必须包含时区")
                 review = evaluate_material(next((material for material in materials if material.id == args.material_id), None), rules)
                 if review["status"] != "passed":
                     result = {"ok": False, "code": "review_blocked", "review": review}
